@@ -61,8 +61,11 @@ A comprehensive Personal Protective Equipment (PPE) detection system using YOLOv
    - You can train your own model or use a pre-trained PPE detection model
 
 5. **Configure Telegram (Optional)**
-   - Create a Telegram bot using [@BotFather](https://t.me/botfather)
-   - Get your chat ID using [@userinfobot](https://t.me/userinfobot)
+   - Create a Telegram bot using [@BotFather](https://t.me/botfather) and get your bot token
+   - Get your chat ID:
+     - Send a message to your bot
+     - Open in browser: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
+     - Look for `"chat":{"id":123456789}` in the response
    - Update the credentials in the script files
 
 ## Scripts Overview
@@ -208,9 +211,21 @@ VIDEO_SOURCE = 'path/to/video.mp4'
 
 ### Telegram Setup
 
-1. Create a bot with [@BotFather](https://t.me/botfather)
-2. Get your chat ID from [@userinfobot](https://t.me/userinfobot)
-3. Update in the script:
+1. **Create a Telegram Bot**
+   - Open [@BotFather](https://t.me/botfather) on Telegram
+   - Send `/newbot` and follow the instructions
+   - Copy the bot token provided
+
+2. **Get Your Chat ID**
+   - Send any message to your newly created bot
+   - Open this URL in your browser (replace `<YOUR_BOT_TOKEN>` with your actual token):
+     ```
+     https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
+     ```
+   - Look for `"chat":{"id":123456789}` in the JSON response
+   - The number after `"id":` is your chat ID
+
+3. **Update the Script**
    ```python
    TELEGRAM_BOT_TOKEN = 'your_bot_token_here'
    TELEGRAM_CHAT_ID = 'your_chat_id_here'
@@ -303,7 +318,21 @@ python 07_ppe_reports_dashboard.py
 
 ## Model Training
 
-To train your own PPE detection model:
+### Option 1: Google Colab (Recommended)
+
+We provide a ready-to-use Google Colab notebook for training your PPE detection model:
+
+**[Open Training Notebook in Colab](https://colab.research.google.com/drive/1c654-sUZ-IdwwPlYaXQNtNysaOtMq3ir)**
+
+Benefits:
+- Free GPU access (Tesla T4, P100, or V100)
+- Pre-configured environment
+- Step-by-step training guide
+- Automatic model export
+
+### Option 2: Local Training
+
+To train your own PPE detection model locally:
 
 1. Prepare dataset with annotations (helmet, vest, gloves, boots, goggles, person)
 2. Use YOLOv11 training:
@@ -312,8 +341,26 @@ To train your own PPE detection model:
    ```
 3. Place trained model in `models/best.pt`
 
+### Training Tips
+
+- **Dataset size**: Minimum 500-1000 images for good results
+- **Annotations**: Use tools like Roboflow, LabelImg, or CVAT
+- **Data augmentation**: Include various lighting conditions, angles, and backgrounds
+- **Class balance**: Ensure balanced representation of all PPE classes
+- **Validation split**: Use 80/20 train/validation split
+
+## Resources
+
+- **Model Training**: [Google Colab Notebook](https://colab.research.google.com/drive/1c654-sUZ-IdwwPlYaXQNtNysaOtMq3ir)
+- **YOLOv11**: [Ultralytics Documentation](https://docs.ultralytics.com/)
+- **Telegram Bot Setup**:
+  - Create bot: [@BotFather](https://t.me/botfather)
+  - Get chat ID: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
+
 ## Acknowledgments
 
 - YOLOv11 by Ultralytics
-- PySide6 for GUI
+- PySide6 for GUI framework
 - OpenCV for computer vision
+- Pygame for audio alerts
+- ReportLab for PDF generation
