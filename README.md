@@ -37,6 +37,41 @@ A comprehensive Personal Protective Equipment (PPE) detection system using YOLOv
 - Python 3.8 or higher
 - Webcam or RTSP camera (for live detection)
 
+## Model Training
+
+Before setting up the detection system, you'll need a trained YOLO model for PPE detection.
+
+### Option 1: Google Colab (Recommended)
+
+We provide a ready-to-use Google Colab notebook for training your PPE detection model:
+
+**[Open Training Notebook in Colab](https://colab.research.google.com/drive/1c654-sUZ-IdwwPlYaXQNtNysaOtMq3ir)**
+
+Benefits:
+- Free GPU access (Tesla T4, P100, or V100)
+- Pre-configured environment
+- Step-by-step training guide
+- Automatic model export
+
+### Option 2: Local Training
+
+To train your own PPE detection model locally:
+
+1. Prepare dataset with annotations (helmet, vest, gloves, boots, goggles, person)
+2. Use YOLOv11 training:
+   ```bash
+   yolo train model=yolov11n.pt data=ppe_dataset.yaml epochs=100 imgsz=640
+   ```
+3. Place trained model in `models/best.pt`
+
+### Training Tips
+
+- **Dataset size**: Minimum 500-1000 images for good results
+- **Annotations**: Use tools like Roboflow, LabelImg, or CVAT
+- **Data augmentation**: Include various lighting conditions, angles, and backgrounds
+- **Class balance**: Ensure balanced representation of all PPE classes
+- **Validation split**: Use 80/20 train/validation split
+
 ## Installation
 
 1. **Clone the repository**
@@ -315,39 +350,6 @@ python 07_ppe_reports_dashboard.py
 - Ensure `data/` directory exists
 - Check file permissions
 - Delete and recreate database if corrupted
-
-## Model Training
-
-### Option 1: Google Colab (Recommended)
-
-We provide a ready-to-use Google Colab notebook for training your PPE detection model:
-
-**[Open Training Notebook in Colab](https://colab.research.google.com/drive/1c654-sUZ-IdwwPlYaXQNtNysaOtMq3ir)**
-
-Benefits:
-- Free GPU access (Tesla T4, P100, or V100)
-- Pre-configured environment
-- Step-by-step training guide
-- Automatic model export
-
-### Option 2: Local Training
-
-To train your own PPE detection model locally:
-
-1. Prepare dataset with annotations (helmet, vest, gloves, boots, goggles, person)
-2. Use YOLOv11 training:
-   ```bash
-   yolo train model=yolov11n.pt data=ppe_dataset.yaml epochs=100 imgsz=640
-   ```
-3. Place trained model in `models/best.pt`
-
-### Training Tips
-
-- **Dataset size**: Minimum 500-1000 images for good results
-- **Annotations**: Use tools like Roboflow, LabelImg, or CVAT
-- **Data augmentation**: Include various lighting conditions, angles, and backgrounds
-- **Class balance**: Ensure balanced representation of all PPE classes
-- **Validation split**: Use 80/20 train/validation split
 
 ## Resources
 
