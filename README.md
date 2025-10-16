@@ -101,7 +101,7 @@ A comprehensive Personal Protective Equipment (PPE) detection system using YOLOv
 
 ### 3. Complete System
 
-#### `06_roi_telegram_logging_ppe_detection.py` ⭐ (Recommended)
+#### `06_roi_telegram_logging_ppe_detection.py`
 The most complete detection system with:
 - Full GUI interface
 - ROI selection
