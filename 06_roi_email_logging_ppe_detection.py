@@ -360,13 +360,13 @@ class EmailNotifier:
 
     def validate_credentials(self):
         """Validate email credentials"""
-        if not self.sender_email or self.sender_email == 'your_email@gmail.com':
+        if not self.sender_email or self.sender_email == 'YOUR_EMAIL_HERE':
             print("Warning: Email sender not configured")
             return False
-        if not self.sender_password or self.sender_password == 'your_app_password':
+        if not self.sender_password or self.sender_password == 'YOUR_EMAIL_PASSWORD_HERE':
             print("Warning: Email password not configured")
             return False
-        if not self.recipient_email or self.recipient_email == 'recipient@example.com':
+        if not self.recipient_email or self.recipient_email == 'YOUR_EMAIL_RECIPIENT':
             print("Warning: Email recipient not configured")
             return False
 
