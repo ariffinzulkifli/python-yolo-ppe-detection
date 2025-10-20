@@ -1010,8 +1010,8 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
             frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
             frame_height, frame_width = frame.shape[:2]
 
-        # Store current frame
-        self.current_frame = frame.copy()
+        # Store current frame (original without bounding boxes)
+        original_frame = frame.copy()
 
         # Apply ROI if set
         detection_frame = frame.copy()
@@ -1059,6 +1059,18 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
                 # If no tracker, assign sequential IDs
                 person_ids = list(range(len(person_bboxes)))
 
+            # Get annotated frame (with bounding boxes) BEFORE processing violations
+            if self.use_roi and roi_coords:
+                x1, y1, x2, y2 = roi_coords
+                annotated_roi = results[0].plot()
+                frame[y1:y2, x1:x2] = annotated_roi
+                annotated_frame = frame
+            else:
+                annotated_frame = results[0].plot()
+
+            # Update stored frame with annotations (for notifications with bounding boxes)
+            self.current_frame = annotated_frame.copy()
+
             # Process each detected person
             for i, v_result in enumerate(violation_results):
                 person_id = person_ids[i] if i < len(person_ids) else i
@@ -1071,8 +1083,8 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
                     if v_result['has_violation']:
                         self.session_violations += 1
 
-                        # Save violation image
-                        image_path = self.save_violation_image(self.current_frame, person_id)
+                        # Save violation image (original frame without bounding boxes)
+                        image_path = self.save_violation_image(original_frame, person_id)
 
                         # Log violation to database
                         self.db.log_violation(
@@ -1083,7 +1095,7 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
                             image_path
                         )
 
-                        # Trigger alert
+                        # Trigger alert (will send annotated frame with bounding boxes)
                         self.trigger_alert(v_result['violation_message'])
                     else:
                         self.session_compliant += 1
@@ -1103,18 +1115,6 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
             if not any(v['has_violation'] for v in violation_results):
                 self.status_label.setText("Status: Detection running... No violations")
                 self.status_label.setStyleSheet("")
-
-            # Get annotated frame
-            if self.use_roi and roi_coords:
-                x1, y1, x2, y2 = roi_coords
-                annotated_roi = results[0].plot()
-                frame[y1:y2, x1:x2] = annotated_roi
-                annotated_frame = frame
-            else:
-                annotated_frame = results[0].plot()
-
-            # Update stored frame with annotations
-            self.current_frame = annotated_frame.copy()
 
             # Add violation warning overlay if any violations
             if any(v['has_violation'] for v in violation_results):

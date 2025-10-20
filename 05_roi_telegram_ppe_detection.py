@@ -548,9 +548,6 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
             self.stop_detection()
             return
 
-        # Store current frame for Telegram
-        self.current_frame = frame.copy()
-
         frame_height, frame_width = frame.shape[:2]
 
         # Apply ROI if set
@@ -574,6 +571,18 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
             # Check for violations
             has_violation, violation_message = self.check_violations(results)
 
+            # Get annotated frame (with bounding boxes) BEFORE triggering alert
+            if self.use_roi and roi_coords:
+                x1, y1, x2, y2 = roi_coords
+                annotated_roi = results[0].plot()
+                frame[y1:y2, x1:x2] = annotated_roi
+                annotated_frame = frame
+            else:
+                annotated_frame = results[0].plot()
+
+            # Update stored frame with annotations (for Telegram with bounding boxes)
+            self.current_frame = annotated_frame.copy()
+
             if has_violation:
                 self.trigger_alert(violation_message)
             else:
@@ -593,18 +602,6 @@ Please ensure all personnel wear proper PPE equipment in the designated area.
                 self.detection_label.setText("Detected:\n" + "\n".join(detected_items))
             else:
                 self.detection_label.setText("No detections")
-
-            # Get annotated frame
-            if self.use_roi and roi_coords:
-                x1, y1, x2, y2 = roi_coords
-                annotated_roi = results[0].plot()
-                frame[y1:y2, x1:x2] = annotated_roi
-                annotated_frame = frame
-            else:
-                annotated_frame = results[0].plot()
-
-            # Update stored frame with annotations for Telegram
-            self.current_frame = annotated_frame.copy()
 
             # Add violation warning overlay if violation detected
             if has_violation:
